@@ -1,0 +1,72 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    background-color: grey;
+  }
+  
+  
+  .form-login h4 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .controls {
+    width: 100%;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    border: 1px solid rgb(3, 3, 36) ;
+    font-family: 'calibri';
+    font-size: 18px;
+  }
+  
+  .form-login label {
+    height: 40px;
+    text-align: center;
+    font-size: 18px;
+    line-height: 40px;
+    margin-bottom: 16px;
+  }
+  
+  .form-login a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .form-login a:hover {
+    color: white;
+    text-decoration: underline;
+  }
+  
+  .boton-login{
+    width: 100%;
+    background: #1f53c5;
+    border: none;
+    padding: 12px;
+    color: white;
+    margin: 40px 0;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .boton-login:hover{
+    background-color: grey;
+     
+  }
+  
+  fieldset{
+    border: none;
+  }
+  
+  .password-recovery{
+    float: center;
+    margin-bottom: 30px;
+  }
+  
+  
