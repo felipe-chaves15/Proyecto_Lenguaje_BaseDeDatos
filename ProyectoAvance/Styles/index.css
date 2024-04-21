@@ -1,0 +1,48 @@
+.login-button {
+    float: right; 
+    margin-right: 20px;
+    margin-top: 25px; 
+    background-color: white; 
+    color: black; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+.login-button:hover {
+    background-color: grey; 
+}
+
+
+
+
+
+/*ESTILOS PARA EL NAV*/
+.navbar  ul {
+    list-style-type: none; 
+    margin: 0;
+    padding-left: 15px;
+}
+
+
+.navbar  a {
+    text-decoration: none; 
+    color: white; 
+    font-weight: bold; 
+}
+
+.navbar a:hover {
+    color: grey; 
+}
+
+.navbar  li{
+    list-style: none;
+    height:30px;
+    display: block; 
+    margin-bottom: 10px;
+
+}
+
