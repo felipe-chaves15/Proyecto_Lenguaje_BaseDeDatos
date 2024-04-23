@@ -97,6 +97,8 @@
                 <li><button class="button-nav" type="submit" href="#" id="reporte" name="Factura">Factura</button></li>
                 <a href="Factura.php" class="profile-button">Configuración Factura</a>
                 <li><button class="button-nav" type="submit" href="#" id="Pedido" name="Pedido">Pedido</button></li>
+                <a href="Pedido.php" class="profile-button">Configuración Pedido</a>
+
             </ul>  
         </form>
         </navbar>
