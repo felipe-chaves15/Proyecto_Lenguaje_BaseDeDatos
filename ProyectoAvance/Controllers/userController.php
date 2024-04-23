@@ -53,12 +53,12 @@ public function eliminarCliente($cliente_id) {
     }
 
     // Métodos para Categoría
-    public function insertarCategoria($id_categoria, $nombre_categoria) {
-        insertarCategoria($id_categoria, $nombre_categoria);
+    public function insertarCategoria($id_categoria, $nombre) {
+        insertarCategoria($id_categoria, $nombre);
     }
 
-    public function actualizarCategoria($id_categoria, $nombre_categoria) {
-        actualizarCategoria($id_categoria, $nombre_categoria);
+    public function actualizarCategoria($id_categoria, $nombre) {
+        actualizarCategoria($id_categoria, $nombre);
     }
 
     public function eliminarCategoria($id_categoria) {

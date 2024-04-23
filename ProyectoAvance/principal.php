@@ -82,11 +82,20 @@
             <ul>
             <li><button class="button-nav" type="submit" href="#" id="Inicio" name="Inicio">Inicio</button></li>
                 <li><button class="button-nav" type="submit" href="#" id="Perfil" name="Perfil">Perfil</button></li>
+                <!-- Botón de perfil que dirige a la página de gestión del perfil -->
+                <a href="updateCliente.php" class="profile-button">Configuración Perfil</a>
+
                 <li><button class="button-nav" type="submit" href="#" id="Categoria" name="Categoria">Categoria</button></li>
+                <a href="Categoria.php" class="profile-button">Configuración Categoria</a>
+
                 <li><button class="button-nav" type="submit" href="#" id="Marcas" name="Marcas">Marcas</button></li>
+                <a href="Marcas.php" class="profile-button">Configuración Marcas</a>
+
                 <li><button class="button-nav" type="submit" href="#" id="Productos" name="Productos">Productos</button></li>
+                <a href="Productos.php" class="profile-button">Configuración Productos</a>
                 <li><button class="button-nav" type="submit" href="#" id="Carrito" name="Carrito">Carrito</button></li>
                 <li><button class="button-nav" type="submit" href="#" id="reporte" name="Factura">Factura</button></li>
+                <a href="Factura.php" class="profile-button">Configuración Factura</a>
                 <li><button class="button-nav" type="submit" href="#" id="Pedido" name="Pedido">Pedido</button></li>
             </ul>  
         </form>
@@ -94,29 +103,7 @@
         <main class="main">
             <?php
                  
-                 if(isset($_POST["user"]))
-                 {
-                     include VIEWS_PATH . '/adminUsuario.php';
-                 }
-                 elseif(isset($_POST["empleado"]))
-                 {
-                     include VIEWS_PATH . '/adminEmpleados.php';
-                    }
-                elseif(isset($_POST["tarea"]))
-                 {
-                     include VIEWS_PATH . '/adminTasks.php';
-                     
-                 }
-                 elseif(isset($_POST["proyecto"]))
-                    
-                 {
-                     include VIEWS_PATH . '/adminProyectos.php';
-                 }
-                 elseif(isset($_POST["reporte"]))
-                 {
-                     include VIEWS_PATH . '/adminReportes.php';
-                 }
-                 else{
+
                     
                      // Mensaje de bienvenida
                      echo"<br><br>";
@@ -127,7 +114,7 @@
                      
 
 
-                 }
+                 
             ?>   
         </main>
         <aside class="sidebar"></aside>
