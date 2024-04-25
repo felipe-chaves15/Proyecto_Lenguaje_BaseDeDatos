@@ -30,8 +30,7 @@
     <input class="controls" type="password" name="password" id="password" placeholder="Ingrese su Contraseña" minlength="6" maxlength="12" required>
     <button id="login"  class="boton-login" name="login">Login</button>
     <p><a href= "register.php">¿No tienes Cuenta? Registrate</a></p>
-    <br>
-    <p><a class="password-recovery" href="changePassword.php">Recuperar Contraseña</a></p>
+
 
 </fieldset>
 </form>
@@ -60,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '<div class="alert">Error de conexión: ' . $errorMessage['message'] . '</div>';
     } else {
         // Consulta SQL para verificar el correo electrónico y la contraseña
-        $sql = "SELECT * FROM CLIENTES WHERE CORREO = :email AND CONTRASENA = :password";
+        $sql = "SELECT * FROM CLIENTES WHERE CORREO = :email AND PASSWORD = :password";
         $stmt = oci_parse($conn, $sql);
 
         // Vincular parámetros

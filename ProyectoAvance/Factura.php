@@ -17,7 +17,7 @@ if (!$conn) {
 // Function to insert a new invoice
 function insertInvoice($conn, $fecha_factura, $total, $precio, $id_pedido)
 {
-    $stid = oci_parse($conn, 'INSERT INTO FACTURAS (FECHA_FACTURA, TOTAL, PRECIO, ID_PEDIDO) VALUES (TO_DATE(:fecha_factura, \'YYYY-MM-DD\'), :total, :precio, :id_pedido)');
+    $stid = oci_parse($conn, 'BEGIN Paquete_Facturas.Insertar_FACTURA(TO_DATE(:fecha_factura, \'YYYY-MM-DD\'), :total, :precio, :id_pedido); END;');
     oci_bind_by_name($stid, ':fecha_factura', $fecha_factura);
     oci_bind_by_name($stid, ':total', $total);
     oci_bind_by_name($stid, ':precio', $precio);
@@ -26,18 +26,18 @@ function insertInvoice($conn, $fecha_factura, $total, $precio, $id_pedido)
 }
 
 // Function to delete an invoice
-function deleteInvoice($conn, $id)
+function deleteInvoice($conn, $id_factura)
 {
-    $stid = oci_parse($conn, 'DELETE FROM FACTURAS WHERE ID_FACTURA = :id');
-    oci_bind_by_name($stid, ':id', $id);
+    $stid = oci_parse($conn, 'BEGIN Paquete_Facturas.eliminar_FACTURA(:id_factura); END;');
+    oci_bind_by_name($stid, ':id_factura', $id_factura);
     oci_execute($stid);
 }
 
 // Function to update an invoice
-function updateInvoice($conn, $id, $fecha_factura,$total, $precio, $id_pedido)
+function updateInvoice($conn, $id_factura, $fecha_factura, $total, $precio, $id_pedido)
 {
-    $stid = oci_parse($conn, 'UPDATE FACTURAS SET FECHA_FACTURA = TO_DATE(:fecha_factura, \'YYYY-MM-DD\'), TOTAL = :total, PRECIO = :precio, ID_PEDIDO = :id_pedido WHERE ID_FACTURA = :id');
-    oci_bind_by_name($stid, ':id', $id);
+    $stid = oci_parse($conn, 'BEGIN Paquete_Facturas.actualizar_factura(:id_factura, TO_DATE(:fecha_factura, \'YYYY-MM-DD\'), :total, :precio, :id_pedido); END;');
+    oci_bind_by_name($stid, ':id_factura', $id_factura);
     oci_bind_by_name($stid, ':fecha_factura', $fecha_factura);
     oci_bind_by_name($stid, ':total', $total);
     oci_bind_by_name($stid, ':precio', $precio);
@@ -51,11 +51,11 @@ if (isset($_POST['insertar'])) {
 }
 
 if (isset($_POST['actualizar'])) {
-    updateInvoice($conn, $_POST['id'], $_POST['fecha_factura'], $_POST['total'], $_POST['precio'], $_POST['id_pedido']);
+    updateInvoice($conn, $_POST['id_factura'], $_POST['fecha_factura'], $_POST['total'], $_POST['precio'], $_POST['id_pedido']);
 }
 
 if (isset($_POST['eliminar'])) {
-    deleteInvoice($conn, $_POST['id']);
+    deleteInvoice($conn, $_POST['id_factura']);
 }
 
 oci_close($conn);
@@ -154,24 +154,24 @@ oci_close($conn);
         <!-- Formulario de actualización -->
         <h2>Actualizar Factura</h2>
         <form method="post">
-            <label for="id">ID de la Factura a actualizar:</label>
-            <input type="number" id="id" name="id" required>
+            <label for="id_factura">ID de la Factura a actualizar:</label>
+            <input type="number" id="id_factura" name="id_factura" required>
             <label for="nuevo-fecha_factura">Nueva Fecha:</label>
-            <input type="date" id="nuevo-fecha_factura" name="fecha_factura" required>
+            <input type="date" id="nuevo-fecha_factura" name="nuevo-fecha_factura" required>
             <label for="nuevo-total">Nuevo Total:</label>
-            <input type="number" id="nuevo-total" name="total" step="0.01" required>
+            <input type="number" id="nuevo-total" name="nuevo-total" step="0.01" required>
             <label for="nuevo-precio">Nuevo Precio:</label>
-            <input type="number" id="nuevo-precio" name="precio" step="0.01" required>
+            <input type="number" id="nuevo-precio" name="nuevo-precio" step="0.01" required>
             <label for="nuevo-id_pedido">Nuevo ID Pedido:</label>
-            <input type="number" id="nuevo-id_pedido" name="id_pedido" required>
+            <input type="number" id="nuevo-id_pedido" name="nuevo-id_pedido" required>
             <button type="submit" name="actualizar">Actualizar</button>
         </form>
         
         <!-- Formulario de eliminación -->
         <h2>Eliminar Factura</h2>
         <form method="post">
-            <label for="id-eliminar">ID de la Factura a eliminar:</label>
-            <input type="number" id="id-eliminar" name="id" required>
+            <label for="id_factura-eliminar">ID de la Factura a eliminar:</label>
+            <input type="number" id="id_factura-eliminar" name="id_factura" required>
             <button type="submit" name="eliminar">Eliminar</button>
         </form>
 

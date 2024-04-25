@@ -81,9 +81,9 @@
         <br>
             <ul>
             <li><button class="button-nav" type="submit" href="#" id="Inicio" name="Inicio">Inicio</button></li>
-                <li><button class="button-nav" type="submit" href="#" id="Perfil" name="Perfil">Perfil</button></li>
+                <li><button class="button-nav" type="submit" href="#" id="Perfil" name="Perfil">Perfil Cliente</button></li>
                 <!-- Botón de perfil que dirige a la página de gestión del perfil -->
-                <a href="updateCliente.php" class="profile-button">Configuración Perfil</a>
+                <a href="updateCliente.php" class="profile-button">Configuración Cliente</a>
 
                 <li><button class="button-nav" type="submit" href="#" id="Categoria" name="Categoria">Categoria</button></li>
                 <a href="Categoria.php" class="profile-button">Configuración Categoria</a>
@@ -94,6 +94,9 @@
                 <li><button class="button-nav" type="submit" href="#" id="Productos" name="Productos">Productos</button></li>
                 <a href="Productos.php" class="profile-button">Configuración Productos</a>
                 <li><button class="button-nav" type="submit" href="#" id="Carrito" name="Carrito">Carrito</button></li>
+                <br>
+                <a href="Carrito.php" class="profile-button">Ver Carrito</a>
+
                 <li><button class="button-nav" type="submit" href="#" id="reporte" name="Factura">Factura</button></li>
                 <a href="Factura.php" class="profile-button">Configuración Factura</a>
                 <li><button class="button-nav" type="submit" href="#" id="Pedido" name="Pedido">Pedido</button></li>

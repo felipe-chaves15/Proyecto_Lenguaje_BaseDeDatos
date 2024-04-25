@@ -1,69 +1,9 @@
-<?php
-
-include_once('global.php');
-include_once(CONTROLLERS_PATH . '/userController.php');
-
-if (isset($_POST["errorMessage"])) {
-    echo '<div class="alert">' . $_POST["errorMessage"] . '</div>';
-}
-
-$conn = oci_connect('LENGDB_ADM', '1234', 'localhost/XE');
-
-if (!$conn) {
-    $e = oci_error();
-    trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
-}
-
-// Function to insert a new category
-function insertCategory($conn, $nombre)
-{
-    $stid = oci_parse($conn, 'INSERT INTO CATEGORIAS (NOMBRE) VALUES (:nombre)');
-    oci_bind_by_name($stid, ':nombre', $nombre);
-    oci_execute($stid);
-}
-
-// Function to delete a category
-function deleteCategory($conn, $id)
-{
-    $stid = oci_parse($conn, 'DELETE FROM CATEGORIAS WHERE ID_CATEGORIA = :id');
-    oci_bind_by_name($stid, ':id', $id);
-    oci_execute($stid);
-}
-
-// Function to update a category
-function updateCategory($conn, $id, $nombre)
-{
-    $stid = oci_parse($conn, 'UPDATE CATEGORIAS SET NOMBRE = :nombre WHERE ID_CATEGORIA = :id');
-    oci_bind_by_name($stid, ':id', $id);
-    oci_bind_by_name($stid, ':nombre', $nombre);
-    oci_execute($stid);
-}
-
-//Handle form submissions
-if (isset($_POST['insertar'])) {
-    insertCategory($conn, $_POST['nombre']);
-}
-
-if (isset($_POST['actualizar'])) {
-    updateCategory($conn, $_POST['id'], $_POST['nombre']);
-}
-
-if (isset($_POST['eliminar'])) {
-    deleteCategory($conn, $_POST['id']);
-}
-
-
-oci_close($conn);
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD Categoría</title>
+    <title>CRUD Categorías</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -97,7 +37,7 @@ oci_close($conn);
             color: #666;
         }
 
-        input[type="text"], input[type="number"], button {
+        input[type="text"], input[type="number"], input[type="email"], input[type="tel"], textarea, button {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -131,7 +71,13 @@ oci_close($conn);
 </head>
 <body>
     <div class="container">
-        <h1>CRUD Categoría</h1>
+        <h1>CRUD Categorías</h1>
+
+        <?php
+        if (isset($_POST["successMessage"])) {
+            echo '<script>alert("' . $_POST["successMessage"] . '");</script>';
+        }
+        ?>
 
         <!-- Formulario de inserción -->
         <h2>Insertar Categoría</h2>
@@ -144,21 +90,85 @@ oci_close($conn);
         <!-- Formulario de actualización -->
         <h2>Actualizar Categoría</h2>
         <form method="post">
-            <label for="id">ID de la Categoría a actualizar:</label>
-            <input type="number" id="id" name="id" required>
-            <label for="nuevo-nombre">Nuevo Nombre:</label>
-            <input type="text" id="nuevo-nombre" name="nombre" required>
+            <label for="id_categoria_update">ID:</label>
+            <input type="number" id="id_categoria_update" name="id_categoria_update" required>
+            <label for="nuevo_nombre">Nuevo Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nuevo_nombre" required>
             <button type="submit" name="actualizar">Actualizar</button>
         </form>
         
         <!-- Formulario de eliminación -->
         <h2>Eliminar Categoría</h2>
         <form method="post">
-            <label for="id-eliminar">ID de la Categoría a eliminar:</label>
-            <input type="number" id="id-eliminar" name="id" required>
+            <label for="id_categoria_delete">ID:</label>
+            <input type="number" id="id_categoria_delete" name="id_categoria_delete" required>
             <button type="submit" name="eliminar">Eliminar</button>
         </form>
 
     </div>
 </body>
 </html>
+
+<?php
+
+include_once('global.php');
+include_once(CONTROLLERS_PATH . '/userController.php');
+
+$conn = oci_connect('LENGDB_ADM', '1234', 'localhost/XE');
+
+if (!$conn) {
+    $e = oci_error();
+    trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+}
+
+// Function to insert a new category
+function insertCategory($conn, $nombre)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_categorias.insertar_categoria(:id_categoria, :nombre); END;');
+    oci_bind_by_name($stid, ':id_categoria', $id_categoria);
+    oci_bind_by_name($stid, ':nombre', $nombre);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la inserción
+    $_POST["successMessage"] = "Se insertó correctamente la categoría.";
+}
+
+// Function to update a category
+function updateCategory($conn, $id_categoria, $nombre)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_categorias.actualizar_categoria(:id_categoria, :nombre); END;');
+    oci_bind_by_name($stid, ':id_categoria', $id_categoria);
+    oci_bind_by_name($stid, ':nombre', $nombre);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la actualización
+    $_POST["successMessage"] = "Se actualizó correctamente la categoría.";
+}
+
+// Function to delete a category
+function deleteCategory($conn, $id_categoria)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_categorias.eliminar_categoria(:id_categoria); END;');
+    oci_bind_by_name($stid, ':id_categoria', $id_categoria);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la eliminación
+    $_POST["successMessage"] = "Se eliminó correctamente la categoría.";
+}
+
+// Handle form submissions
+if (isset($_POST['insertar'])) {
+    insertCategory($conn, $_POST['nombre']);
+}
+
+if (isset($_POST['actualizar'])) {
+    updateCategory($conn, $_POST['id_categoria_update'], $_POST['nuevo_nombre']);
+}
+
+if (isset($_POST['eliminar'])) {
+    deleteCategory($conn, $_POST['id_categoria_delete']);
+}
+
+oci_close($conn);
+
+?>

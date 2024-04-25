@@ -131,9 +131,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errorMessage = oci_error();
         echo '<div class="alert">Error de conexión: ' . $errorMessage['message'] . '</div>';
     } else {
-        // Preparar la consulta SQL de inserción
-        $sql = "INSERT INTO CLIENTES (ID_CLIENTE, NOMBRE, APELLIDO, CORREO, TELEFONO, DIRECCION, CONTRASENA) 
-                VALUES (clientes_id_cliente_seq.NEXTVAL, :nombre, :apellido, :correo, :telefono, :direccion, :contrasena)";
+        // Llamar al procedimiento de inserción del paquete
+        $sql = "BEGIN paquete_clientes.insertar_cliente(:nombre, :apellido, :correo, :telefono, :direccion, :password); END;";
 
         $stmt = oci_parse($conn, $sql);
 
@@ -143,7 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         oci_bind_by_name($stmt, ':correo', $correo);
         oci_bind_by_name($stmt, ':telefono', $telefono);
         oci_bind_by_name($stmt, ':direccion', $direccion);
-        oci_bind_by_name($stmt, ':contrasena', $contrasena);
+        oci_bind_by_name($stmt, ':password', $contrasena);
 
         // Ejecutar la consulta
         $result = oci_execute($stmt);

@@ -1,71 +1,3 @@
-<?php
-
-include_once('global.php');
-include_once(CONTROLLERS_PATH . '/userController.php');
-
-if (isset($_POST["errorMessage"])) {
-    echo '<div class="alert">' . $_POST["errorMessage"] . '</div>';
-}
-
-$conn = oci_connect('LENGDB_ADM', '1234', 'localhost/XE');
-
-if (!$conn) {
-    $e = oci_error();
-    trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
-}
-
-// Function to insert a new product
-function insertProduct($conn, $nombre, $descripcion, $cantidad, $precio, $idCategoria, $idMarca)
-{
-    $stid = oci_parse($conn, 'INSERT INTO PRODUCTOS (NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, ID_CATEGORIA, ID_MARCA) VALUES (:nombre, :descripcion, :cantidad, :precio, :idCategoria, :idMarca)');
-    oci_bind_by_name($stid, ':nombre', $nombre);
-    oci_bind_by_name($stid, ':descripcion', $descripcion);
-    oci_bind_by_name($stid, ':cantidad', $cantidad);
-    oci_bind_by_name($stid, ':precio', $precio);
-    oci_bind_by_name($stid, ':idCategoria', $idCategoria);
-    oci_bind_by_name($stid, ':idMarca', $idMarca);
-    oci_execute($stid);
-}
-
-// Function to delete a product
-function deleteProduct($conn, $id)
-{
-    $stid = oci_parse($conn, 'DELETE FROM PRODUCTOS WHEREID_PRODUCTO =:id');
-    oci_bind_by_name($stid, ':id', $id);
-    oci_execute($stid);
-}
-
-// Function to update a product
-function updateProduct($conn, $id, $nombre, $descripcion, $cantidad, $precio, $idCategoria, $idMarca)
-{
-    $stid = oci_parse($conn, 'UPDATE PRODUCTOS SET NOMBRE = :nombre, DESCRIPCION = :descripcion, CANTIDAD = :cantidad, PRECIO = :precio, ID_CATEGORIA = :idCategoria, ID_MARCA = :idMarca WHERE ID_PRODUCTO = :id');
-    oci_bind_by_name($stid, ':id', $id);
-    oci_bind_by_name($stid, ':nombre', $nombre);
-    oci_bind_by_name($stid, ':descripcion', $descripcion);
-    oci_bind_by_name($stid, ':cantidad', $cantidad);
-    oci_bind_by_name($stid, ':precio', $precio);
-    oci_bind_by_name($stid, ':idCategoria', $idCategoria);
-    oci_bind_by_name($stid, ':idMarca', $idMarca);
-    oci_execute($stid);
-}
-
-//Handle form submissions
-if (isset($_POST['insertar'])) {
-    insertProduct($conn, $_POST['nombre'], $_POST['descripcion'], $_POST['cantidad'], $_POST['precio'], $_POST['idCategoria'], $_POST['idMarca']);
-}
-
-if (isset($_POST['actualizar'])) {
-    updateProduct($conn, $_POST['id'], $_POST['nombre'], $_POST['descripcion'], $_POST['cantidad'], $_POST['precio'], $_POST['idCategoria'], $_POST['idMarca']);
-}
-
-if (isset($_POST['eliminar'])) {
-    deleteProduct($conn, $_POST['id']);
-}
-
-oci_close($conn);
-
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -105,7 +37,7 @@ oci_close($conn);
             color: #666;
         }
 
-        input[type="text"], input[type="number"], textarea, button {
+        input[type="text"], input[type="number"], input[type="email"], input[type="tel"], textarea, button {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -141,21 +73,27 @@ oci_close($conn);
     <div class="container">
         <h1>CRUD Producto</h1>
 
+        <?php
+        if (isset($_POST["successMessage"])) {
+            echo '<script>alert("' . $_POST["successMessage"] . '");</script>';
+        }
+        ?>
+
         <!-- Formulario de inserción -->
         <h2>Insertar Producto</h2>
         <form method="post">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required>
             <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" required></textarea>
+            <input type="text" id="descripcion" name="descripcion" required>
             <label for="cantidad">Cantidad:</label>
             <input type="number" id="cantidad" name="cantidad" required>
             <label for="precio">Precio:</label>
-            <input type="number" id="precio" name="precio" step="0.01" required>
-            <label for="idCategoria">ID Categoría:</label>
-            <input type="number" id="idCategoria" name="idCategoria" required>
-            <label for="idMarca">ID Marca:</label>
-            <input type="number" id="idMarca" name="idMarca" required>
+            <input type="number" id="precio" name="precio" required>
+            <label for="id_categoria">Categoría:</label>
+            <input type="number" id="id_categoria" name="id_categoria" required>
+            <label for="id_marca">Marca:</label>
+            <input type="number" id="id_marca" name="id_marca" required>
             <button type="submit" name="insertar">Insertar</button>
         </form>
         
@@ -163,19 +101,18 @@ oci_close($conn);
         <h2>Actualizar Producto</h2>
         <form method="post">
             <label for="id">ID del Producto a actualizar:</label>
-            <input type="number" id="id" name="id" required>
-            <label for="nuevo-nombre">Nuevo Nombre:</label>
-            <input type="text" id="nuevo-nombre" name="nombre" required>
+            <input type="number" id="id" name="id" required><label for="nuevo-nombre">Nuevo Nombre:</label>
+            <input type="text" id="nuevo-nombre" name="nuevo-nombre" required>
             <label for="nuevo-descripcion">Nueva Descripción:</label>
-            <textarea id="nuevo-descripcion" name="descripcion" required></textarea>
+            <input type="text" id="nuevo-descripcion" name="nuevo-descripcion" required>
             <label for="nuevo-cantidad">Nueva Cantidad:</label>
-            <input type="number" id="nuevo-cantidad" name="cantidad" required>
+            <input type="number" id="nuevo-cantidad" name="nuevo-cantidad" required>
             <label for="nuevo-precio">Nuevo Precio:</label>
-            <input type="number" id="nuevo-precio" name="precio" step="0.01" required>
-            <label for="nuevo-idCategoria">Nuevo ID Categoría:</label>
-            <input type="number" id="nuevo-idCategoria" name="idCategoria" required>
-            <label for="nuevo-idMarca">Nuevo ID Marca:</label>
-            <input type="number" id="nuevo-idMarca" name="idMarca" required>
+            <input type="number" id="nuevo-precio" name="nuevo-precio" required>
+            <label for="nuevo-id_categoria">Nueva Categoría:</label>
+            <input type="number" id="nuevo-id_categoria" name="nuevo-id_categoria" required>
+            <label for="nuevo-id_marca">Nueva Marca:</label>
+            <input type="number" id="nuevo-id_marca" name="nuevo-id_marca" required>
             <button type="submit" name="actualizar">Actualizar</button>
         </form>
         
@@ -183,10 +120,83 @@ oci_close($conn);
         <h2>Eliminar Producto</h2>
         <form method="post">
             <label for="id-eliminar">ID del Producto a eliminar:</label>
-            <input type="number" id="id-eliminar" name="id" required>
+            <input type="number" id="id-eliminar" name="id-eliminar" required>
             <button type="submit" name="eliminar">Eliminar</button>
         </form>
 
     </div>
 </body>
 </html>
+
+<?php
+
+include_once('global.php');
+include_once(CONTROLLERS_PATH . '/userController.php');
+
+$conn = oci_connect('LENGDB_ADM', '1234', 'localhost/XE');
+
+if (!$conn) {
+    $e = oci_error();
+    trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+}
+
+// Function to insert a new product
+function insertProduct($conn, $nombre, $descripcion, $cantidad, $precio, $id_categoria, $id_marca)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_productos.insertar_producto(:nombre, :descripcion, :cantidad, :precio, :id_categoria, :id_marca); END;');
+    oci_bind_by_name($stid, ':nombre', $nombre);
+    oci_bind_by_name($stid, ':descripcion', $descripcion);
+    oci_bind_by_name($stid, ':cantidad', $cantidad);
+    oci_bind_by_name($stid, ':precio', $precio);
+    oci_bind_by_name($stid, ':id_categoria', $id_categoria);
+    oci_bind_by_name($stid, ':id_marca', $id_marca);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la inserción
+    $_POST["successMessage"] = "Se añadieron exitosamente sus pedidos al carrito de compras";
+}
+
+// Function to update a product
+function updateProduct($conn, $id, $nombre, $descripcion, $cantidad, $precio, $id_categoria, $id_marca)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_productos.actualizar_producto(:id, :nombre, :descripcion, :cantidad, :precio, :id_categoria, :id_marca); END;');
+    oci_bind_by_name($stid, ':id', $id);
+    oci_bind_by_name($stid, ':nombre', $nombre);
+    oci_bind_by_name($stid, ':descripcion', $descripcion);
+    oci_bind_by_name($stid, ':cantidad', $cantidad);
+    oci_bind_by_name($stid, ':precio', $precio);
+    oci_bind_by_name($stid, ':id_categoria', $id_categoria);
+    oci_bind_by_name($stid, ':id_marca', $id_marca);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la actualización
+    $_POST["successMessage"] = "Producto actualizado correctamente";
+}
+
+// Function to delete a product
+function deleteProduct($conn, $id)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_productos.eliminar_producto(:id); END;');
+    oci_bind_by_name($stid, ':id', $id);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la eliminación
+    $_POST["successMessage"] = "Producto eliminado correctamente";
+}
+
+// Handle form submissions
+if (isset($_POST['insertar'])) {
+    insertProduct($conn, $_POST['nombre'], $_POST['descripcion'], $_POST['cantidad'], $_POST['precio'], $_POST['id_categoria'], $_POST['id_marca']);
+}
+
+if (isset($_POST['actualizar'])) {
+    updateProduct($conn, $_POST['id'], $_POST['nuevo-nombre'], $_POST['nuevo-descripcion'], $_POST['nuevo-cantidad'], $_POST['nuevo-precio'], $_POST['nuevo-id_categoria'], $_POST['nuevo-id_marca']);
+}
+
+if (isset($_POST['eliminar'])) {
+    deleteProduct($conn, $_POST['id-eliminar']);
+}
+
+oci_close($conn);
+
+?>

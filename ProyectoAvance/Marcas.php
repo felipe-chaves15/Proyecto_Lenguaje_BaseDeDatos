@@ -14,26 +14,26 @@ if (!$conn) {
     trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
 }
 
-// Function to insert a new marca
+// Function to insert a new marca using the package
 function insertMarca($conn, $nombre)
 {
-    $stid = oci_parse($conn, 'INSERT INTO MARCAS (NOMBRE) VALUES (:nombre)');
+    $stid = oci_parse($conn, 'BEGIN paquete_marcas.insertar_marca(:nombre); END;');
     oci_bind_by_name($stid, ':nombre', $nombre);
     oci_execute($stid);
 }
 
-// Function to delete a marca
+// Function to delete a marca using the package
 function deleteMarca($conn, $id)
 {
-    $stid = oci_parse($conn, 'DELETE FROM MARCAS WHERE ID_MARCA =:id');
+    $stid = oci_parse($conn, 'BEGIN paquete_marcas.eliminar_marca(:id); END;');
     oci_bind_by_name($stid, ':id', $id);
     oci_execute($stid);
 }
 
-// Function to update a marca
+// Function to update a marca using the package
 function updateMarca($conn, $id, $nombre)
 {
-    $stid = oci_parse($conn, 'UPDATE MARCAS SET NOMBRE = :nombre WHERE ID_MARCA = :id');
+    $stid = oci_parse($conn, 'BEGIN paquete_marcas.actualizar_marca(:id, :nombre); END;');
     oci_bind_by_name($stid, ':id', $id);
     oci_bind_by_name($stid, ':nombre', $nombre);
     oci_execute($stid);

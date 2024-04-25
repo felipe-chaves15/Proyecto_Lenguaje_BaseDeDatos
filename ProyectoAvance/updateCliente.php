@@ -1,71 +1,3 @@
-<?php
-
-include_once('global.php');
-include_once(CONTROLLERS_PATH . '/userController.php');
-
-if (isset($_POST["errorMessage"])) {
-    echo '<div class="alert">' . $_POST["errorMessage"] . '</div>';
-}
-
-$conn = oci_connect('LENGDB_ADM', '1234', 'localhost/XE');
-
-if (!$conn) {
-    $e = oci_error();
-    trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
-}
-
-// Function to insert a new client
-function insertClient($conn, $nombre, $apellido, $correo, $telefono, $direccion, $contrasena)
-{
-    $stid = oci_parse($conn, 'INSERT INTO CLIENTES (NOMBRE, APELLIDO, CORREO, TELEFONO, DIRECCION, CONTRASENA) VALUES (:nombre, :apellido, :correo, :telefono, :direccion, :contrasena)');
-    oci_bind_by_name($stid, ':nombre', $nombre);
-    oci_bind_by_name($stid, ':apellido', $apellido);
-    oci_bind_by_name($stid, ':correo', $correo);
-    oci_bind_by_name($stid, ':telefono', $telefono);
-    oci_bind_by_name($stid, ':direccion', $direccion);
-    oci_bind_by_name($stid, ':contrasena', $contrasena);
-    oci_execute($stid);
-}
-
-// Function to delete a client
-function deleteClient($conn, $id)
-{
-    $stid = oci_parse($conn, 'DELETE FROM CLIENTES WHERE ID_CLIENTE =:id');
-    oci_bind_by_name($stid, ':id', $id);
-    oci_execute($stid);
-}
-
-// Function to update a client
-function updateClient($conn, $id, $nombre, $apellido, $correo, $telefono, $direccion, $contrasena)
-{
-    $stid = oci_parse($conn, 'UPDATE CLIENTES SET NOMBRE = :nombre, APELLIDO = :apellido, CORREO = :correo, TELEFONO = :telefono, DIRECCION = :direccion, CONTRASENA = :contrasena WHERE ID_CLIENTE = :id');
-    oci_bind_by_name($stid, ':id', $id);
-    oci_bind_by_name($stid, ':nombre', $nombre);
-    oci_bind_by_name($stid, ':apellido', $apellido);
-    oci_bind_by_name($stid, ':correo', $correo);
-    oci_bind_by_name($stid, ':telefono', $telefono);
-    oci_bind_by_name($stid, ':direccion', $direccion);
-    oci_bind_by_name($stid, ':contrasena', $contrasena);
-    oci_execute($stid);
-}
-
-//Handle form submissions
-if (isset($_POST['insertar'])) {
-    insertClient($conn, $_POST['nombre'], $_POST['apellido'], $_POST['correo'], $_POST['telefono'], $_POST['direccion'], $_POST['contrasena']);
-}
-
-if (isset($_POST['actualizar'])) {
-    updateClient($conn, $_POST['id'], $_POST['nombre'], $_POST['apellido'], $_POST['correo'], $_POST['telefono'], $_POST['direccion'], $_POST['contrasena']);
-}
-
-if (isset($_POST['eliminar'])) {
-    deleteClient($conn, $_POST['id']);
-}
-
-oci_close($conn);
-
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -141,6 +73,12 @@ oci_close($conn);
     <div class="container">
         <h1>CRUD Cliente</h1>
 
+        <?php
+        if (isset($_POST["successMessage"])) {
+            echo '<script>alert("' . $_POST["successMessage"] . '");</script>';
+        }
+        ?>
+
         <!-- Formulario de inserción -->
         <h2>Insertar Cliente</h2>
         <form method="post">
@@ -154,8 +92,8 @@ oci_close($conn);
             <input type="tel" id="telefono" name="telefono" required>
             <label for="direccion">Dirección:</label>
             <textarea id="direccion" name="direccion" required></textarea>
-            <label for="contrasena">Contraseña:</label>
-            <input type="password" id="contrasena" name="contrasena" required>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
             <button type="submit" name="insertar">Insertar</button>
         </form>
         
@@ -163,19 +101,18 @@ oci_close($conn);
         <h2>Actualizar Cliente</h2>
         <form method="post">
             <label for="id">ID del Cliente a actualizar:</label>
-            <input type="number" id="id" name="id" required>
-            <label for="nuevo-nombre">Nuevo Nombre:</label>
-            <input type="text" id="nuevo-nombre" name="nombre" required>
-            <labelfor="nuevo-apellido">Nuevo Apellido:</label>
-            <input type="text" id="nuevo-apellido" name="apellido" required>
+            <input type="number" id="id" name="id" required><label for="nuevo-nombre">Nuevo Nombre:</label>
+            <input type="text" id="nuevo-nombre" name="nuevo-nombre" required>
+            <label for="nuevo-apellido">Nuevo Apellido:</label>
+            <input type="text" id="nuevo-apellido" name="nuevo-apellido" required>
             <label for="nuevo-correo">Nuevo Correo:</label>
-            <input type="email" id="nuevo-correo" name="correo" required>
+            <input type="email" id="nuevo-correo" name="nuevo-correo" required>
             <label for="nuevo-telefono">Nuevo Teléfono:</label>
-            <input type="tel" id="nuevo-telefono" name="telefono" required>
-            <label for="nuevo-direccion">Nueva Dirección:</label>
-            <textarea id="nuevo-direccion" name="direccion" required></textarea>
-            <label for="nuevo-contrasena">Nueva Contraseña:</label>
-            <input type="password" id="nuevo-contrasena" name="contrasena" required>
+            <input type="tel" id="nuevo-telefono" name="nuevo-telefono" required>
+            <label for="nueva-direccion">Nueva Dirección:</label>
+            <textarea id="nueva-direccion" name="nueva-direccion" required></textarea>
+            <label for="nueva-contrasena">Nueva Contraseña:</label>
+            <input type="password" id="nueva-contrasena" name="nueva-contrasena" required>
             <button type="submit" name="actualizar">Actualizar</button>
         </form>
         
@@ -183,10 +120,83 @@ oci_close($conn);
         <h2>Eliminar Cliente</h2>
         <form method="post">
             <label for="id-eliminar">ID del Cliente a eliminar:</label>
-            <input type="number" id="id-eliminar" name="id" required>
+            <input type="number" id="id-eliminar" name="id-eliminar" required>
             <button type="submit" name="eliminar">Eliminar</button>
         </form>
 
     </div>
 </body>
 </html>
+
+<?php
+
+include_once('global.php');
+include_once(CONTROLLERS_PATH . '/userController.php');
+
+$conn = oci_connect('LENGDB_ADM', '1234', 'localhost/XE');
+
+if (!$conn) {
+    $e = oci_error();
+    trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+}
+
+// Function to insert a new client
+function insertClient($conn, $nombre, $apellido, $correo, $telefono, $direccion, $password)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_clientes.insertar_cliente(:nombre, :apellido, :correo, :telefono, :direccion, :password); END;');
+    oci_bind_by_name($stid, ':nombre', $nombre);
+    oci_bind_by_name($stid, ':apellido', $apellido);
+    oci_bind_by_name($stid, ':correo', $correo);
+    oci_bind_by_name($stid, ':telefono', $telefono);
+    oci_bind_by_name($stid, ':direccion', $direccion);
+    oci_bind_by_name($stid, ':password', $password);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la inserción
+    $_POST["successMessage"] = "Se añadieron exitosamente sus pedidos al carrito de compras";
+}
+
+// Function to update a client
+function updateClient($conn, $id, $nombre, $apellido, $correo, $telefono, $direccion, $password)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_clientes.actualizar_cliente(:id, :nombre, :apellido, :correo, :telefono, :direccion, :password); END;');
+    oci_bind_by_name($stid, ':id', $id);
+    oci_bind_by_name($stid, ':nombre', $nombre);
+    oci_bind_by_name($stid, ':apellido', $apellido);
+    oci_bind_by_name($stid, ':correo', $correo);
+    oci_bind_by_name($stid, ':telefono', $telefono);
+    oci_bind_by_name($stid, ':direccion', $direccion);
+    oci_bind_by_name($stid, ':password', $password);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la actualización
+    $_POST["successMessage"] = "Cliente actualizado correctamente";
+}
+
+// Function to delete a client
+function deleteClient($conn, $id)
+{
+    $stid = oci_parse($conn, 'BEGIN paquete_clientes.eliminar_cliente(:id); END;');
+    oci_bind_by_name($stid, ':id', $id);
+    oci_execute($stid);
+
+    // Enviar mensaje de éxito después de la eliminación
+    $_POST["successMessage"] = "Cliente eliminado correctamente";
+}
+
+// Handle form submissions
+if (isset($_POST['insertar'])) {
+    insertClient($conn, $_POST['nombre'], $_POST['apellido'], $_POST['correo'], $_POST['telefono'], $_POST['direccion'], $_POST['password']);
+}
+
+if (isset($_POST['actualizar'])) {
+    updateClient($conn, $_POST['id'], $_POST['nuevo-nombre'], $_POST['nuevo-apellido'], $_POST['nuevo-correo'], $_POST['nuevo-telefono'], $_POST['nueva-direccion'], $_POST['nueva-contrasena']);
+}
+
+if (isset($_POST['eliminar'])) {
+    deleteClient($conn, $_POST['id-eliminar']);
+}
+
+oci_close($conn);
+
+?>
